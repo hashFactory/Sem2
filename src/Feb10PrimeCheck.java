@@ -45,45 +45,12 @@ public class Feb10PrimeCheck extends JFrame implements ActionListener
         add(southPanel, BorderLayout.SOUTH);
     }
 
-    public void slow_is_prime(long number)
-    {
-        boolean primality = true;
-        if (number > 2 && number % 2 == 0)
-        {
-            primality = false;
-        }
-        else
-        {
-            long sqrt = (long)(Math.sqrt(number) + 1);
-            for (long i = 3; i < sqrt; i+=2)
-            {
-                if (number % i == 0)
-                {
-                    primality = false;
-                    i = sqrt;
-                }
-            }
-        }
-
-        if (primality)
-        {
-            status.setText("100% done checking  |  ");
-            is_prime.setText(number + " is a prime number.");
-        }
-        else
-        {
-            status.setText("100% done checking  |  ");
-            is_prime.setText(number + " is not a prime number.");
-        }
-
-    }
-
     @Override
     public void actionPerformed(ActionEvent e)
     {
         if (e.getActionCommand().equalsIgnoreCase("Check now"))
         {
-            slow_is_prime(Long.valueOf(input_field.getText()));
+            //slow_is_prime(Long.valueOf(input_field.getText()));
         }
     }
 }

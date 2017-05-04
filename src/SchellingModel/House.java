@@ -3,6 +3,7 @@ package SchellingModel;
 /**
  * Created by charpentiert on 3/17/17.
  */
+
 public class House
 {
     public int x = 0;
@@ -15,13 +16,15 @@ public class House
         x = _x;
         y = _y;
         double temp = Math.random();
-        if (temp < 0.5)
+        if (temp < 0.3)
             color = 1;
-        else if (temp < 0.9)
+        else if (temp < 0.6)
             color = 2;
         else
             color = 3;
 
         tolerance = _tol;
+
+
     }
 }

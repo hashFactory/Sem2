@@ -8,6 +8,7 @@ import javax.swing.*;
 import java.applet.Applet;
 import java.awt.*;
 import java.util.ArrayList;
+import java.util.Scanner;
 
 /**
  * Created by charpentiert on 3/17/17.
@@ -16,9 +17,11 @@ public class HouseDriver extends JApplet implements Runnable
 {
     public static int tilex = 25;
     public static int tiley = 25;
-    public static House[] houses = new House[tilex * tiley];
+    public static House[][] houses = new House[tilex][tiley];
     private double tileWidth;
     private double tileHeight;
+
+    private static Scanner kb = new Scanner(System.in);
 
     public void init()
     {
@@ -35,7 +38,7 @@ public class HouseDriver extends JApplet implements Runnable
         tileHeight = (double)getHeight() / (double)tiley;
         for (int i = 0; i < tilex; i++)
             for (int j = 0; j < tiley; j++)
-                houses[i * tilex + j] = new House(i, j, 25);
+                houses[i][j] = new House(i, j, 45);
     }
 
     public void start()
@@ -67,17 +70,31 @@ public class HouseDriver extends JApplet implements Runnable
     public void paint(Graphics g)
     {
 
-        for (int i = 0; i < tilex * tiley; i++)
+        for (int i = 0; i < tilex; i++)
         {
-            if (houses[i].color == 1)
-                g.setColor(Color.GREEN);
-            else if (houses[i].color == 2)
-                g.setColor(Color.BLUE);
-            else if (houses[i].color == 3)
+            for (int j = 0; j < tiley; j++)
             {
-                g.setColor(getBackground());
+                if (!HouseMethods.isHappy(houses[i][j])) {
+                    g.setColor(Color.BLACK);
+                    g.fillRect(i * (int) tileWidth, j * (int) tileWidth, (int) tileWidth, (int) tileHeight);
+                } else {
+                    g.setColor(Color.WHITE);
+                    g.fillRect(i * (int) tileWidth, j * (int) tileWidth, (int) tileWidth, (int) tileHeight);
+                }
+
+                if (houses[i][j].color == 1)
+                    g.setColor(Color.GREEN);
+                else if (houses[i][j].color == 2)
+                    g.setColor(Color.BLUE);
+                else if (houses[i][j].color == 3)
+                    g.setColor(getBackground());
+
+                g.fillOval(i * (int) tileWidth, j * (int) tileWidth, (int) tileWidth, (int) tileHeight);
+                g.setColor(Color.ORANGE);
+                g.drawString(Integer.toString(i * tilex + j), i * (int) tileWidth, j * (int) tileWidth + (int) tileWidth);
+
+                //System.out.println("House " + i + " is happy? " + HouseMethods.isHappy(houses[i][j]));
             }
-            g.fillOval((i % tilex) * (int)tileWidth, ((i / tiley) % tiley) * (int)tileWidth, (int)tileWidth, (int)tileHeight);
         }
     }
 
@@ -85,57 +102,83 @@ public class HouseDriver extends JApplet implements Runnable
         Thread.currentThread().setPriority(Thread.MIN_PRIORITY);
         while (true)
         {
-            /*
-            ArrayList<Integer> emptyHouses = HouseMethods.returnEmptyHouses();
-            for (int i = 0; i < emptyHouses.size(); i++)
-                System.out.print(emptyHouses.get(i) + "\t");
-            System.out.println();
-*/
-            ArrayList<Integer> emptyHouses  = new ArrayList<>();
-            for (int i = 0; i < tilex; i++)
+
+            for (int i = 0; i < tiley; i++)
             {
-                for (int j = 0; j < tiley; j++)
+                int j = (int)(Math.random() * tilex);
+                if (!HouseMethods.isHappy(houses[i][j]))
                 {
-                    if (HouseMethods.isHappy(houses[i * tilex + j]))
-                        emptyHouses.add(i * tilex + j);
-                }
-            }
-
-            for (int i = 0; i < tilex; i++)
-            {
-                for (int j = 0; j < tiley; j++)
-                {
-
-                }
-            }
-
-            for (int i = 0; i < 7893454; i++)
-            {
-                int num = (int)(Math.random() * tilex * tiley);
-
-                boolean result = HouseMethods.isHappy(houses[num]);
-                if (!result)
-                {
-                    boolean isHappy = false;
-                    int random_house = 0;
-                    while (!isHappy)
+                    boolean found_empty_house = false;
+                    int random = 0;
+                    while (!found_empty_house)
                     {
-                        random_house = (int)(Math.random() * tilex * tiley);
-                        isHappy = HouseMethods.isHappy(houses[random_house]);
+                        random = (int)(Math.random() * tilex * tiley);
+                        if (houses[random % tilex][random / tiley].color == 3 && HouseMethods.isHappy(new House(random % tilex, random / tiley, houses[i][j].color)))
+                            found_empty_house = true;
                     }
-                    House temp = houses[num];
-                    houses[num] = houses[random_house];
-                    houses[random_house] = temp;
+
+                    System.out.println("Will switch house (" + (random % tilex) + "," + (random / tiley) + ") with house (" + i + "," + j + ")");
+
+                    House temp = houses[random % tilex][random / tiley];
+                    houses[random % tilex][random / tiley] = houses[i][j];
+                    houses[i][j] = temp;
                 }
             }
+
+
+            try {
+                Thread.sleep(100);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            System.out.println("Input house number: ");
+            try {
+                Thread.sleep(20);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            int i = kb.nextInt();
+
+            int x = i % tilex;
+            int y = i / tiley;
+
+            System.out.println("House " + i + " has " + HouseMethods.getNeighbors(houses[x][y]).length + " neighbors");
+            try {
+                Thread.sleep(20);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            System.out.print("Its neighbors are: ");
+            for (House num: HouseMethods.getNeighbors(houses[x][y]))
+                System.out.print((num.x * tilex + num.y) + ", ");
+            System.out.println();
+            try {
+                Thread.sleep(20);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            System.out.println("House " + (i) + " is happy? " + Boolean.toString(HouseMethods.isHappy(houses[x][y])));
+
+            int of_kind_1 = 0;
+            int of_kind_2 = 0;
+            for (House house: HouseMethods.getNeighbors(houses[x][y])) {
+                if (house.color == 1)
+                    of_kind_1++;
+                if (house.color == 2)
+                    of_kind_2++;
+            }
+            System.out.println("It has " + of_kind_1 + " neighbors of kind 1 and " + of_kind_2 + " neighbors of kind 2");
+
+            int poop = kb.nextInt();
 
 
             repaint();
             try {
-                Thread.sleep(2);
+                Thread.sleep(2000);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
+
         }
     }
 }

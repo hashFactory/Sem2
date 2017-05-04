@@ -5,7 +5,8 @@ public class GCD
 {
     static ArrayList<Integer> gcd = new ArrayList<>(), factor = new ArrayList<>();
 
-    public static void main(String[] args) {
+    public static void main(String[] args)
+    {
         System.out.println("Please input two positive integers in a comma separated way");
         String[] input = new Scanner(System.in).nextLine().split(",");
         int[] n = {Integer.parseInt(input[0]), Integer.parseInt(input[1])};
