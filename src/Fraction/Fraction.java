@@ -34,11 +34,27 @@ public class Fraction
 
     public Fraction reduce()
     {
-        BigInteger b1 = BigInteger.valueOf(num);
-        BigInteger b2 = BigInteger.valueOf(den);
-        BigInteger gcd = b1.gcd(b2);
-        num /= Long.valueOf(gcd.toString());
-        den /= Long.valueOf(gcd.toString());
+        //BigInteger b1 = BigInteger.valueOf(num);
+        //BigInteger b2 = BigInteger.valueOf(den);
+        //BigInteger gcd = b1.gcd(b2);
+        //num /= Long.valueOf(gcd.toString());
+        //den /= Long.valueOf(gcd.toString());
+        //return this;
+
+        ArrayList<Long> gcd = new ArrayList<>(), factor = new ArrayList<>();
+        //int num1, int num2;
+        long iterations = -1, latest = num, _latest = den;
+        do {
+            iterations++;
+            factor.add(latest / _latest);
+            gcd.add(latest - (factor.get((int)iterations) * _latest));
+            System.out.println(latest + " = " + _latest + " x " + factor.get((int)iterations) + " + " + (char) 27 + "[33m" + gcd.get((int)iterations) + (char) 27 + "[0m");
+            latest = _latest;
+            _latest = gcd.get((int)iterations);
+        }
+        while (gcd.get((int)iterations) != 0);
+        num /= gcd.get((int)iterations - 1);
+        den /= gcd.get((int)iterations - 1);
         return this;
     }
 
